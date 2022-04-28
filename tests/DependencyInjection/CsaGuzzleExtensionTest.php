@@ -20,10 +20,11 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\Yaml\Parser;
+use Symfony\Component\DependencyInjection\Reference;
 
 class CsaGuzzleExtensionTest extends TestCase
 {
-    public function testClientCreated()
+    public function testClientCreated(): void
     {
         $yaml = <<<'YAML'
 profiler:
@@ -57,7 +58,7 @@ YAML;
         $this->assertFalse($client->isLazy());
     }
 
-    public function testDefaultClientNotLazy()
+    public function testDefaultClientNotLazy(): void
     {
         $yaml = <<<'YAML'
 profiler:
@@ -73,7 +74,7 @@ YAML;
         $this->assertFalse($client->isLazy());
     }
 
-    public function testLazyClient()
+    public function testLazyClient(): void
     {
         $yaml = <<<'YAML'
 profiler:
@@ -90,7 +91,7 @@ YAML;
         $this->assertTrue($client->isLazy());
     }
 
-    public function testClientAliasing()
+    public function testClientAliasing(): void
     {
         $yaml = <<<'YAML'
 profiler:
@@ -106,7 +107,7 @@ YAML;
         $this->assertSame($container->findDefinition('bar'), $container->getDefinition('csa_guzzle.client.foo'));
     }
 
-    public function testClientClassOverride()
+    public function testClientClassOverride(): void
     {
         $yaml = <<<YAML
 clients:
@@ -121,7 +122,7 @@ YAML;
         $this->assertEquals('AppBundle\Client', $client->getClass());
     }
 
-    public function testClientConfigInstanceOverride()
+    public function testClientConfigInstanceOverride(): void
     {
         $yaml = <<<'YAML'
 clients:
@@ -132,22 +133,17 @@ YAML;
 
         $container = $this->createContainer($yaml);
         $config = $container->getDefinition('csa_guzzle.client.foo')->getArgument(0);
-        $this->assertInstanceOf(
-            'Symfony\Component\DependencyInjection\Reference',
-            $config['handler']
-        );
+        $this->assertInstanceOf(Reference::class, $config['handler']);
         $this->assertSame(
             'my.handler.id',
             (string) $config['handler']
         );
     }
 
-    /**
-     * @expectedException \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Config for "csa_guzzle.client.bar" should be an array, but got string
-     */
-    public function testInvalidClientConfig()
+    public function testInvalidClientConfig(): void
     {
+        $this->expectExceptionMessage("Config for \"csa_guzzle.client.bar\" should be an array, but got string");
+        $this->expectException(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class);
         $yaml = <<<'YAML'
 clients:
     foo:
@@ -159,7 +155,7 @@ YAML;
         $this->createContainer($yaml);
     }
 
-    public function testMiddlewareAddedToClient()
+    public function testMiddlewareAddedToClient(): void
     {
         $yaml = <<<'YAML'
 logger: true
@@ -182,7 +178,7 @@ YAML;
         );
     }
 
-    public function testCustomMiddlewareAddedToClient()
+    public function testCustomMiddlewareAddedToClient(): void
     {
         $yaml = <<<'YAML'
 logger: true
@@ -209,7 +205,7 @@ YAML;
         );
     }
 
-    public function testDisableMiddleware()
+    public function testDisableMiddleware(): void
     {
         $yaml = <<<'YAML'
 logger: true
@@ -236,7 +232,7 @@ YAML;
         );
     }
 
-    public function testLoggerConfiguration()
+    public function testLoggerConfiguration(): void
     {
         $yaml = <<<'YAML'
 logger:
@@ -261,7 +257,7 @@ YAML;
         $this->assertFalse($container->hasDefinition('csa_guzzle.middleware.logger'));
     }
 
-    public function testCacheConfiguration()
+    public function testCacheConfiguration(): void
     {
         $yaml = <<<'YAML'
 cache: false
@@ -282,7 +278,7 @@ YAML;
         $this->assertSame('my.adapter.id', (string) $alias);
     }
 
-    public function testMockConfiguration()
+    public function testMockConfiguration(): void
     {
         $yaml = <<<'YAML'
 mock:
@@ -309,7 +305,7 @@ YAML;
         $this->assertContains('X-Guzzle-Cache', $storage->getArgument(1));
     }
 
-    public function testAutoconfigurationDoesNotRegistersServiceWhenDisabledByDefault()
+    public function testAutoconfigurationDoesNotRegistersServiceWhenDisabledByDefault(): void
     {
         $services = [
             AutoconfiguredClient::class => AutoconfiguredClient::class,
@@ -328,7 +324,7 @@ YAML;
         $this->assertFalse($actualDefinition->hasTag('csa_guzzle.client'));
     }
 
-    public function testAutoconfigurationRegistersServiceWhenEnabled()
+    public function testAutoconfigurationRegistersServiceWhenEnabled(): void
     {
         $services = [
             AutoconfiguredClient::class => AutoconfiguredClient::class,
@@ -351,7 +347,7 @@ YAML;
         $this->assertTrue($actualDefinition->hasTag('csa_guzzle.client'));
     }
 
-    private function createContainer($yaml, array $services = [])
+    private function createContainer($yaml, array $services = []): ContainerBuilder
     {
         $parser = new Parser();
         $container = new ContainerBuilder();

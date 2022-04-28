@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class MiddlewarePassTest extends TestCase
 {
-    public function testAllMiddlewareAddedToTaggedClientsByDefault()
+    public function testAllMiddlewareAddedToTaggedClientsByDefault(): void
     {
         $container = $this->createContainer();
         $container->setDefinition('client', $client = $this->createClient());
@@ -36,7 +36,7 @@ class MiddlewarePassTest extends TestCase
         $this->assertEquals(['push', [new Reference('my_mid2'), 'my_mid2']], $calls[1]);
     }
 
-    public function testSpecificMiddlewareAddedToClient()
+    public function testSpecificMiddlewareAddedToClient(): void
     {
         $client = $this->createClient(['foo', 'bar']);
 
@@ -56,7 +56,7 @@ class MiddlewarePassTest extends TestCase
         $this->assertEquals(['push', [new Reference('bar'), 'bar']], $calls[1]);
     }
 
-    public function testDisableSpecificMiddlewareForClient()
+    public function testDisableSpecificMiddlewareForClient(): void
     {
         $client = $this->createClient(['!foo']);
 
@@ -76,12 +76,10 @@ class MiddlewarePassTest extends TestCase
         $this->assertEquals(['push', [new Reference('qux'), 'qux']], $calls[1]);
     }
 
-    /**
-     * @expectedException \Symfony\Component\DependencyInjection\Exception\LogicException
-     * @expectedExceptionMessage You cannot mix whitelisting and blacklisting of middleware at the same time.
-     */
-    public function testForbidWhitelistingAlongWithBlacklisting()
+    public function testForbidWhitelistingAlongWithBlacklisting(): void
     {
+        $this->expectExceptionMessage("You cannot mix whitelisting and blacklisting of middleware at the same time.");
+        $this->expectException(\Symfony\Component\DependencyInjection\Exception\LogicException::class);
         $client = $this->createClient(['!foo', 'bar']);
 
         $container = $this->createContainer();
@@ -95,7 +93,7 @@ class MiddlewarePassTest extends TestCase
         $pass->process($container);
     }
 
-    public function testServicesCanUseEitherWhitelistingOrBlacklisting()
+    public function testServicesCanUseEitherWhitelistingOrBlacklisting(): void
     {
         $client1 = $this->createClient(['foo', 'bar']);
         $client2 = $this->createClient(['!foo', '!bar']);
@@ -121,7 +119,7 @@ class MiddlewarePassTest extends TestCase
         $this->assertEquals(['push', [new Reference('qux'), 'qux']], $calls[0]);
     }
 
-    public function testMiddlewareWithPriority()
+    public function testMiddlewareWithPriority(): void
     {
         $client = $this->createClient();
 
@@ -142,7 +140,7 @@ class MiddlewarePassTest extends TestCase
         $this->assertEquals(['push', [new Reference('qux'), 'qux']], $calls[2]);
     }
 
-    public function testNoMiddleware()
+    public function testNoMiddleware(): void
     {
         $client = $this->createClient();
 
@@ -155,7 +153,7 @@ class MiddlewarePassTest extends TestCase
         $this->assertCount(0, $client->getArguments());
     }
 
-    public function testCustomHandlerStackIsKeptAndMiddlewareAdded()
+    public function testCustomHandlerStackIsKeptAndMiddlewareAdded(): void
     {
         $handler = new Definition(HandlerStack::class);
         $client = $this->createClient([], $handler);
@@ -175,9 +173,9 @@ class MiddlewarePassTest extends TestCase
         $this->assertTrue($clientHandler->hasMethodCall('push'));
     }
 
-    public function testCustomHandlerCallableIsWrappedAndMiddlewareAdded()
+    public function testCustomHandlerCallableIsWrappedAndMiddlewareAdded(): void
     {
-        $handler = function () {
+        $handler = static function () {
         };
         $client = $this->createClient([], $handler);
         $container = $this->createContainer();
@@ -197,14 +195,14 @@ class MiddlewarePassTest extends TestCase
         $this->assertTrue($clientHandler->hasMethodCall('push'));
     }
 
-    private function createMiddleware(ContainerBuilder $container, $alias, $priority = null)
+    private function createMiddleware(ContainerBuilder $container, $alias, $priority = null): void
     {
         $middleware = new Definition();
         $middleware->addTag(MiddlewarePass::MIDDLEWARE_TAG, ['alias' => $alias, 'priority' => $priority]);
         $container->setDefinition($alias, $middleware);
     }
 
-    private function createClient(array $middleware = null, $handler = null)
+    private function createClient(array $middleware = null, $handler = null): Definition
     {
         $client = new Definition();
         $client->addTag(
@@ -219,7 +217,7 @@ class MiddlewarePassTest extends TestCase
         return $client;
     }
 
-    private function createContainer()
+    private function createContainer(): ContainerBuilder
     {
         return new ContainerBuilder();
     }

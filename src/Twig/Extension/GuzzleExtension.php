@@ -15,14 +15,9 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
-/**
- * Csa Guzzle Collector.
- *
- * @author Charles Sarrazin <charles@sarraz.in>
- */
 class GuzzleExtension extends AbstractExtension
 {
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('csa_guzzle_pretty_print', [$this, 'prettyPrint']),
@@ -32,44 +27,27 @@ class GuzzleExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * Get functions.
-     *
-     * @return TwigFunction[]
-     */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('csa_guzzle_detect_lang', [$this, 'detectLang']),
         ];
     }
 
-    public function detectLang($body)
+    public function detectLang($body): string
     {
-        switch (true) {
-            case 0 === strpos($body, '<?xml'):
-                return 'xml';
-            case 0 === strpos($body, '{'):
-            case 0 === strpos($body, '['):
-                return 'json';
-            default:
-                return 'markup';
-        }
+        return match (true) {
+            \str_starts_with($body, '<?xml') => 'xml',
+            \str_starts_with($body, '{'), \str_starts_with($body, '[') => 'json',
+            default => 'markup',
+        };
     }
 
-    /**
-     * Pretty print.
-     *
-     * @param $code
-     * @param $lang
-     *
-     * @return false|string
-     */
-    public function prettyPrint($code, $lang)
+    public function prettyPrint($code, $lang): bool|string
     {
         switch ($lang) {
             case 'json':
-                return json_encode(json_decode($code), JSON_PRETTY_PRINT);
+                return \json_encode(\json_decode($code), \JSON_PRETTY_PRINT);
             case 'xml':
                 $xml = new \DomDocument('1.0');
                 $xml->preserveWhiteSpace = false;
@@ -82,29 +60,23 @@ class GuzzleExtension extends AbstractExtension
         }
     }
 
-    public function statusCodeClass($statusCode)
+    public function statusCodeClass($statusCode): string
     {
-        switch (true) {
-            case $statusCode >= 500:
-                return 'server-error';
-            case $statusCode >= 400:
-                return 'client-error';
-            case $statusCode >= 300:
-                return 'redirection';
-            case $statusCode >= 200:
-                return 'success';
-            case $statusCode >= 100:
-                return 'informational';
-            default:
-                return 'unknown';
-        }
+        return match (true) {
+            $statusCode >= 500 => 'server-error',
+            $statusCode >= 400 => 'client-error',
+            $statusCode >= 300 => 'redirection',
+            $statusCode >= 200 => 'success',
+            $statusCode >= 100 => 'informational',
+            default => 'unknown',
+        };
     }
 
-    public function formatDuration($seconds)
+    public function formatDuration($seconds): string
     {
         $formats = ['%.2f s', '%d ms', '%d µs'];
 
-        while ($format = array_shift($formats)) {
+        while ($format = \array_shift($formats)) {
             if ($seconds > 1) {
                 break;
             }
@@ -112,27 +84,22 @@ class GuzzleExtension extends AbstractExtension
             $seconds *= 1000;
         }
 
-        return sprintf($format, $seconds);
+        return \sprintf($format, $seconds);
     }
 
-    public function shortenUri($uri)
+    public function shortenUri($uri): string
     {
-        $parts = parse_url($uri);
+        $parts = \parse_url($uri);
 
-        return sprintf(
+        return \sprintf(
             '%s://%s%s',
-            isset($parts['scheme']) ? $parts['scheme'] : 'http',
+            $parts['scheme'] ?? 'http',
             $parts['host'],
             isset($parts['port']) ? (':'.$parts['port']) : ''
         );
     }
 
-    /**
-     * Get name.
-     *
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'csa_guzzle';
     }

@@ -13,8 +13,10 @@ namespace Csa\Bundle\GuzzleBundle\DependencyInjection;
 
 use Csa\Bundle\GuzzleBundle\DataCollector\GuzzleCollector;
 use GuzzleHttp\MessageFormatter;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use GuzzleHttp\Client;
 
 /**
  * This class contains the configuration information for the bundle.
@@ -29,15 +31,10 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('csa_guzzle');
-        if (method_exists($treeBuilder, 'getRootNode')) {
-            $rootNode = $treeBuilder->getRootNode();
-        } else {
-            // BC layer for symfony/config < 4.2
-            $rootNode = $treeBuilder->root('csa_guzzle');
-        }
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->fixXmlConfig('client')
@@ -90,15 +87,10 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private function createCacheNode()
+    private function createCacheNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('cache');
-        if (method_exists($treeBuilder, 'getRootNode')) {
-            $node = $treeBuilder->getRootNode();
-        } else {
-            // BC layer for symfony/config < 4.2
-            $node = $treeBuilder->root('cache');
-        }
+        $node = $treeBuilder->getRootNode();
 
         $node
             ->canBeEnabled()
@@ -116,21 +108,16 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function createClientsNode()
+    private function createClientsNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('clients');
-        if (method_exists($treeBuilder, 'getRootNode')) {
-            $node = $treeBuilder->getRootNode();
-        } else {
-            // BC layer for symfony/config < 4.2
-            $node = $treeBuilder->root('clients');
-        }
+        $node = $treeBuilder->getRootNode();
 
         $node
             ->useAttributeAsKey('name')
             ->prototype('array')
                 ->children()
-                    ->scalarNode('class')->defaultValue('GuzzleHttp\Client')->end()
+                    ->scalarNode('class')->defaultValue(Client::class)->end()
                     ->booleanNode('lazy')->defaultFalse()->end()
                     ->variableNode('config')->end()
                     ->arrayNode('middleware')
@@ -144,15 +131,10 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function createMockNode()
+    private function createMockNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('mock');
-        if (method_exists($treeBuilder, 'getRootNode')) {
-            $node = $treeBuilder->getRootNode();
-        } else {
-            // BC layer for symfony/config < 4.2
-            $node = $treeBuilder->root('mock');
-        }
+        $node = $treeBuilder->getRootNode();
 
         $node
             ->canBeEnabled()

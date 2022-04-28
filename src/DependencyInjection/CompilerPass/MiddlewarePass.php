@@ -26,11 +26,11 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class MiddlewarePass implements CompilerPassInterface
 {
-    const MIDDLEWARE_TAG = 'csa_guzzle.middleware';
+    public const MIDDLEWARE_TAG = 'csa_guzzle.middleware';
 
-    const CLIENT_TAG = 'csa_guzzle.client';
+    public const CLIENT_TAG = 'csa_guzzle.client';
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $middleware = $this->findAvailableMiddleware($container);
 
@@ -44,21 +44,21 @@ class MiddlewarePass implements CompilerPassInterface
      *
      * @return array
      */
-    private function findAvailableMiddleware(ContainerBuilder $container)
+    private function findAvailableMiddleware(ContainerBuilder $container): array
     {
         $services = $container->findTaggedServiceIds(self::MIDDLEWARE_TAG);
         $middleware = [];
 
         foreach ($services as $id => $tags) {
-            if (count($tags) > 1) {
-                throw new \LogicException(sprintf('Middleware should only use a single \'%s\' tag', self::MIDDLEWARE_TAG));
+            if (\count($tags) > 1) {
+                throw new \LogicException(\sprintf('Middleware should only use a single \'%s\' tag', self::MIDDLEWARE_TAG));
             }
 
             if (!isset($tags[0]['alias'])) {
-                throw new \LogicException(sprintf('The \'alias\' attribute is mandatory for the \'%s\' tag', self::MIDDLEWARE_TAG));
+                throw new \LogicException(\sprintf('The \'alias\' attribute is mandatory for the \'%s\' tag', self::MIDDLEWARE_TAG));
             }
 
-            $priority = isset($tags[0]['priority']) ? $tags[0]['priority'] : 0;
+            $priority = $tags[0]['priority'] ?? 0;
 
             $middleware[$priority][] = [
                 'alias' => $tags[0]['alias'],
@@ -70,9 +70,9 @@ class MiddlewarePass implements CompilerPassInterface
             return [];
         }
 
-        krsort($middleware);
+        \krsort($middleware);
 
-        return call_user_func_array('array_merge', $middleware);
+        return \call_user_func_array('array_merge', $middleware);
     }
 
     /**
@@ -81,7 +81,7 @@ class MiddlewarePass implements CompilerPassInterface
      * @param ContainerBuilder $container
      * @param array            $middlewareBag
      */
-    private function registerMiddleware(ContainerBuilder $container, array $middlewareBag)
+    private function registerMiddleware(ContainerBuilder $container, array $middlewareBag): void
     {
         if (empty($middlewareBag)) {
             return;
@@ -90,8 +90,8 @@ class MiddlewarePass implements CompilerPassInterface
         $clients = $container->findTaggedServiceIds(self::CLIENT_TAG);
 
         foreach ($clients as $clientId => $tags) {
-            if (count($tags) > 1) {
-                throw new \LogicException(sprintf('Clients should use a single \'%s\' tag', self::CLIENT_TAG));
+            if (\count($tags) > 1) {
+                throw new \LogicException(\sprintf('Clients should use a single \'%s\' tag', self::CLIENT_TAG));
             }
 
             $clientMiddleware = $this->filterClientMiddleware($middlewareBag, $tags);
@@ -105,7 +105,7 @@ class MiddlewarePass implements CompilerPassInterface
             $arguments = $clientDefinition->getArguments();
 
             if (!empty($arguments)) {
-                $options = array_shift($arguments);
+                $options = \array_shift($arguments);
             } else {
                 $options = [];
             }
@@ -121,18 +121,18 @@ class MiddlewarePass implements CompilerPassInterface
             $this->addMiddlewareToHandlerStack($handlerStack, $clientMiddleware);
             $options['handler'] = $handlerStack;
 
-            array_unshift($arguments, $options);
+            \array_unshift($arguments, $options);
             $clientDefinition->setArguments($arguments);
         }
     }
 
     /**
-     * @param Reference|Definition|callable $handler   The configured Guzzle handler
+     * @param Reference|Definition|callable $handler The configured Guzzle handler
      * @param ContainerBuilder              $container The container builder
      *
      * @return Definition
      */
-    private function wrapHandlerInHandlerStack($handler, ContainerBuilder $container)
+    private function wrapHandlerInHandlerStack($handler, ContainerBuilder $container): Definition
     {
         if ($handler instanceof Reference) {
             $handler = $container->getDefinition((string) $handler);
@@ -150,7 +150,7 @@ class MiddlewarePass implements CompilerPassInterface
         return $handlerDefinition;
     }
 
-    private function addMiddlewareToHandlerStack(Definition $handlerStack, array $middlewareBag)
+    private function addMiddlewareToHandlerStack(Definition $handlerStack, array $middlewareBag): void
     {
         foreach ($middlewareBag as $middleware) {
             $handlerStack->addMethodCall('push', [new Reference($middleware['id']), $middleware['alias']]);
@@ -159,25 +159,25 @@ class MiddlewarePass implements CompilerPassInterface
 
     /**
      * @param array $middlewareBag The list of availables middleware
-     * @param array $tags          The tags containing middleware configuration
+     * @param array $tags The tags containing middleware configuration
      *
      * @return array The list of middleware to enable for the client
      *
      * @throws LogicException When middleware configuration is invalid
      */
-    private function filterClientMiddleware(array $middlewareBag, array $tags)
+    private function filterClientMiddleware(array $middlewareBag, array $tags): array
     {
         if (!isset($tags[0]['middleware'])) {
             return $middlewareBag;
         }
 
-        $clientMiddlewareList = explode(' ', $tags[0]['middleware']);
+        $clientMiddlewareList = \explode(' ', $tags[0]['middleware']);
 
         $whiteList = [];
         $blackList = [];
         foreach ($clientMiddlewareList as $middleware) {
             if ('!' === $middleware[0]) {
-                $blackList[] = substr($middleware, 1);
+                $blackList[] = \substr($middleware, 1);
             } else {
                 $whiteList[] = $middleware;
             }
@@ -188,13 +188,13 @@ class MiddlewarePass implements CompilerPassInterface
         }
 
         if ($whiteList) {
-            return array_filter($middlewareBag, function ($value) use ($whiteList) {
-                return in_array($value['alias'], $whiteList, true);
-            });
-        } else {
-            return array_filter($middlewareBag, function ($value) use ($blackList) {
-                return !in_array($value['alias'], $blackList, true);
+            return \array_filter($middlewareBag, static function($value) use ($whiteList) {
+                return \in_array($value['alias'], $whiteList, true);
             });
         }
+
+        return \array_filter($middlewareBag, static function($value) use ($blackList) {
+            return !\in_array($value['alias'], $blackList, true);
+        });
     }
 }

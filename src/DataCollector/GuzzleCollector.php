@@ -26,22 +26,22 @@ use Symfony\Component\HttpKernel\Kernel;
  *
  * @author Charles Sarrazin <charles@sarraz.in>
  */
-abstract class InternalGuzzleCollector extends DataCollector
+abstract class AbstractGuzzleCollector extends DataCollector
 {
-    const MAX_BODY_SIZE = 0x10000;
+    public const MAX_BODY_SIZE = 0x10000;
 
-    private $maxBodySize;
+    private int $maxBodySize;
 
-    private $history;
+    private History $history;
 
-    private $curlFormatter = null;
+    private ?\Namshi\Cuzzle\Formatter\CurlFormatter $curlFormatter = null;
 
     /**
      * Constructor.
      *
      * @param int $maxBodySize The max body size to store in the profiler storage
      */
-    public function __construct($maxBodySize = self::MAX_BODY_SIZE, History $history = null)
+    public function __construct(int $maxBodySize = self::MAX_BODY_SIZE, History $history = null)
     {
         $this->maxBodySize = $maxBodySize;
         $this->history = $history ?: new History();
@@ -56,7 +56,7 @@ abstract class InternalGuzzleCollector extends DataCollector
     /**
      * {@inheritdoc}
      */
-    protected function doCollect(Request $request, Response $response, \Throwable $exception = null)
+    protected function doCollect(Request $request, Response $response, \Throwable $exception = null): void
     {
         $data = [];
 
@@ -105,7 +105,7 @@ abstract class InternalGuzzleCollector extends DataCollector
                 }
             }
 
-            if ($error && $error instanceof RequestException) {
+            if ($error instanceof RequestException) {
                 $req['error'] = [
                     'message' => $error->getMessage(),
                     'line' => $error->getLine(),
@@ -121,7 +121,7 @@ abstract class InternalGuzzleCollector extends DataCollector
         $this->data = $data;
     }
 
-    private function cropContent(StreamInterface $stream = null)
+    private function cropContent(StreamInterface $stream = null): string
     {
         if (null === $stream) {
             return '';
@@ -138,17 +138,17 @@ abstract class InternalGuzzleCollector extends DataCollector
 
     public function getErrors()
     {
-        return array_filter($this->data, function ($call) {
+        return \array_filter($this->data, static function ($call) {
             return 0 === $call['httpCode'] || $call['httpCode'] >= 400;
         });
     }
 
-    public function getTotalTime()
+    public function getTotalTime(): float|int
     {
-        return array_sum(
-            array_map(
-                function ($call) {
-                    return isset($call['info']['total_time']) ? $call['info']['total_time'] : 0;
+        return \array_sum(
+            \array_map(
+                static function ($call) {
+                    return $call['info']['total_time'] ?? 0;
                 },
                 $this->data
             )
@@ -171,7 +171,7 @@ abstract class InternalGuzzleCollector extends DataCollector
     /**
      * {@inheritdoc}
      */
-    public function reset()
+    public function reset(): void
     {
         $this->data = [];
     }
@@ -179,26 +179,26 @@ abstract class InternalGuzzleCollector extends DataCollector
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'guzzle';
     }
 }
 
 if (Kernel::MAJOR_VERSION >= 5) {
-    final class GuzzleCollector extends InternalGuzzleCollector
+    final class GuzzleCollector extends AbstractGuzzleCollector
     {
-        public function collect(Request $request, Response $response, \Throwable $exception = null)
+        public function collect(Request $request, Response $response, \Throwable $exception = null): void
         {
-            parent::doCollect($request, $response, $exception);
+            $this->doCollect($request, $response, $exception);
         }
     }
 } else {
-    class GuzzleCollector extends InternalGuzzleCollector
+    class GuzzleCollector extends AbstractGuzzleCollector
     {
-        public function collect(Request $request, Response $response, \Exception $exception = null)
+        public function collect(Request $request, Response $response, \Exception $exception = null): void
         {
-            parent::doCollect($request, $response, $exception);
+            $this->doCollect($request, $response, $exception);
         }
     }
 }

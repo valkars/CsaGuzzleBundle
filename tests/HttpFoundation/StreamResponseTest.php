@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 
 class StreamResponseTest extends TestCase
 {
-    public function testNormalOutput()
+    public function testNormalOutput(): void
     {
         $this->expectOutputString('this should not be streamed');
 
@@ -26,7 +26,7 @@ class StreamResponseTest extends TestCase
         $response->send();
     }
 
-    public function testChunkedOutput()
+    public function testChunkedOutput(): void
     {
         $this->expectOutputString("a\r\nthis shoul\r\na\r\nd not be s\r\n7\r\ntreamed\r\n0\r\n\r\n");
 

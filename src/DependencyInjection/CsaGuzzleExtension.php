@@ -31,7 +31,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
  */
 class CsaGuzzleExtension extends Extension
 {
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
 
@@ -54,7 +54,7 @@ class CsaGuzzleExtension extends Extension
             $container->removeDefinition('csa_guzzle.twig.extension');
         }
 
-        if (method_exists($container, 'registerForAutoconfiguration') && $config['autoconfigure']) {
+        if (\method_exists($container, 'registerForAutoconfiguration') && $config['autoconfigure']) {
             $container->registerForAutoconfiguration(ClientInterface::class)
                 ->addTag('csa_guzzle.client');
         }
@@ -68,7 +68,7 @@ class CsaGuzzleExtension extends Extension
         $this->processClientsConfiguration($config, $container, $config['profiler']['enabled']);
     }
 
-    private function processLoggerConfiguration(array $config, ContainerBuilder $container)
+    private function processLoggerConfiguration(array $config, ContainerBuilder $container): void
     {
         if (!$config['enabled']) {
             $container->removeDefinition('csa_guzzle.middleware.logger');
@@ -93,7 +93,7 @@ class CsaGuzzleExtension extends Extension
         }
     }
 
-    private function processMockConfiguration(array $config, ContainerBuilder $container, LoaderInterface $loader, $debug)
+    private function processMockConfiguration(array $config, ContainerBuilder $container, LoaderInterface $loader, $debug): void
     {
         if (!$config['enabled']) {
             return;
@@ -114,7 +114,7 @@ class CsaGuzzleExtension extends Extension
         $middleware->replaceArgument(2, $debug);
     }
 
-    private function processCacheConfiguration(array $config, ContainerBuilder $container, $debug)
+    private function processCacheConfiguration(array $config, ContainerBuilder $container, $debug): void
     {
         if (!$config['enabled']) {
             $container->removeDefinition('csa_guzzle.middleware.cache');
@@ -127,7 +127,7 @@ class CsaGuzzleExtension extends Extension
         $container->setAlias('csa_guzzle.cache_adapter', $config['adapter']);
     }
 
-    private function processClientsConfiguration(array $config, ContainerBuilder $container, $debug)
+    private function processClientsConfiguration(array $config, ContainerBuilder $container, $debug): void
     {
         if (empty($config['default_client'])) {
             $keys = array_keys($config['clients']);
@@ -182,7 +182,7 @@ class CsaGuzzleExtension extends Extension
         }
     }
 
-    private function buildGuzzleConfig(array $config, $debug)
+    private function buildGuzzleConfig(array $config, $debug): array
     {
         if (isset($config['handler'])) {
             $config['handler'] = new Reference($config['handler']);

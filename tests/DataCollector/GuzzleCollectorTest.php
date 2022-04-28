@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class GuzzleCollectorTest extends TestCase
 {
-    public function testCollect()
+    public function testCollect(): void
     {
         $mocks = array_fill(0, 3, new Response(204));
 
@@ -36,7 +36,7 @@ class GuzzleCollectorTest extends TestCase
         $client = new Client(['handler' => $handler]);
 
         $request = Request::createFromGlobals();
-        $response = $this->createMock('Symfony\Component\HttpFoundation\Response');
+        $response = $this->createMock(\Symfony\Component\HttpFoundation\Response::class);
         $collector->collect($request, $response, new \Exception());
         $this->assertCount(0, $collector->getCalls());
 
@@ -50,7 +50,7 @@ class GuzzleCollectorTest extends TestCase
         $this->assertCount(2, $collector->getCalls());
     }
 
-    public function testCollectCurlData()
+    public function testCollectCurlData(): void
     {
         if (!class_exists(\Namshi\Cuzzle\Formatter\CurlFormatter::class)) {
             $this->markTestSkipped('namshi/cuzzle not installed');
@@ -64,7 +64,7 @@ class GuzzleCollectorTest extends TestCase
         $client = new Client(['handler' => $handler]);
 
         $request = Request::createFromGlobals();
-        $response = $this->createMock('Symfony\Component\HttpFoundation\Response');
+        $response = $this->createMock(\Symfony\Component\HttpFoundation\Response::class);
 
         $client->get('http://foo.bar');
         $collector->collect($request, $response, new \Exception());

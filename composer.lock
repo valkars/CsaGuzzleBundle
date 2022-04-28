@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3c398ed31469d12a3873b209e2619212",
+    "content-hash": "9933981b8f8bc7c495ff2aa8ecde401e",
     "packages": [
         {
             "name": "csa/guzzle-cache-middleware",
@@ -12,7 +12,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/valkars/guzzle-cache-middleware.git",
-                "reference": "2436ee11c9f58dc57208a140a3a404fcd9839dfb"
+                "reference": "b2d2dd50c9cac5643eb8acfcef7970ac92a777eb"
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.1|^7.0",
@@ -58,7 +58,7 @@
                 }
             ],
             "description": "A Cache middleware for GuzzleHttp >= 6.0",
-            "time": "2022-04-28T12:49:17+00:00"
+            "time": "2022-04-28T14:04:19+00:00"
         },
         {
             "name": "csa/guzzle-history-middleware",
@@ -66,7 +66,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/valkars/guzzle-history-middleware.git",
-                "reference": "6484af25ca7441ffc275b78efb21107a840e4c27"
+                "reference": "bd2dd38e711e05da685b8c87059bd40e9f6e6cc6"
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.1|^7.0",
@@ -103,7 +103,7 @@
                 }
             ],
             "description": "A History middleware for GuzzleHttp >= 6.0",
-            "time": "2022-04-28T13:12:31+00:00"
+            "time": "2022-04-28T14:05:02+00:00"
         },
         {
             "name": "csa/guzzle-stopwatch-middleware",
@@ -111,7 +111,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/valkars/guzzle-stopwatch-middleware.git",
-                "reference": "d976bf49d8c5f5e2d6db141b2beec7a829005c79"
+                "reference": "dd1a309f185b9fb4dc232db827769183670e4b5d"
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.1|^7.0",
@@ -149,7 +149,7 @@
                 }
             ],
             "description": "A Stopwatch middleware for GuzzleHttp >= 6.0",
-            "time": "2022-04-28T13:24:02+00:00"
+            "time": "2022-04-28T14:06:00+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -5754,7 +5754,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": {
         "csa/guzzle-cache-middleware": 20,
         "csa/guzzle-history-middleware": 20,
@@ -5762,7 +5762,7 @@
         "roave/security-advisories": 20,
         "namshi/cuzzle": 20
     },
-    "prefer-stable": true,
+    "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.1"

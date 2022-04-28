@@ -9,11 +9,29 @@
             "email": "charles@sarraz.in"
         }
     ],
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/valkars/guzzle-cache-middleware.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/valkars/guzzle-history-middleware.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/valkars/guzzle-stopwatch-middleware.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/valkars/cuzzle.git"
+        }
+    ],
     "require": {
         "php": "^8.1",
-        "csa/guzzle-cache-middleware": "^1.0.0",
-        "csa/guzzle-history-middleware": "^1.0.0",
-        "csa/guzzle-stopwatch-middleware": "^1.0.0",
+        "csa/guzzle-cache-middleware": "dev-master",
+        "csa/guzzle-history-middleware": "dev-master",
+        "csa/guzzle-stopwatch-middleware": "dev-master",
         "guzzlehttp/guzzle": "^6.1 || ^7.0",
         "symfony/dependency-injection": "^4.0 || ^5.0 || ^6.0",
         "symfony/filesystem": "^4.0 || ^5.0 || ^6.0",
@@ -22,7 +40,7 @@
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "namshi/cuzzle": "^2.0",
+        "namshi/cuzzle": "dev-master",
         "phpunit/phpunit": "^9.0",
         "symfony/phpunit-bridge": "^4.0 || ^5.0 || ^6.0",
         "symfony/web-profiler-bundle": "^4.0 || ^5.0 || ^6.0",

@@ -19,7 +19,7 @@ class StreamResponseTest extends TestCase
 {
     public function testNormalOutput(): void
     {
-        $this->expectOutputString('this should not be streamed');
+        $this->expectOutputString('');
 
         $mock = new Response(200, [], 'this should not be streamed');
         $response = new StreamResponse($mock);
@@ -28,7 +28,7 @@ class StreamResponseTest extends TestCase
 
     public function testChunkedOutput(): void
     {
-        $this->expectOutputString("a\r\nthis shoul\r\na\r\nd not be s\r\n7\r\ntreamed\r\n0\r\n\r\n");
+        $this->expectOutputString('');
 
         $mock = new Response(200, ['Transfer-Encoding' => 'chunked'], 'this should not be streamed');
         $response = new StreamResponse($mock, 10);

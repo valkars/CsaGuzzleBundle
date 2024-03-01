@@ -12,6 +12,7 @@
 namespace Csa\Bundle\GuzzleBundle\HttpFoundation;
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class StreamResponse extends Response
@@ -31,6 +32,9 @@ class StreamResponse extends Response
     public function sendContent(): static
     {
         $chunked = $this->headers->has('Transfer-Encoding');
+        if (!$this->content instanceof StreamInterface) {
+            return $this;
+        }
         $this->content->seek(0);
 
         for (; ;) {

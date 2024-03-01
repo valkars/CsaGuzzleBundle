@@ -17,12 +17,11 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @covers \Csa\Bundle\GuzzleBundle\DataCollector\GuzzleCollector
- */
+#[CoversClass(GuzzleCollector::class)]
 class GuzzleCollectorTest extends TestCase
 {
     public function testCollect(): void

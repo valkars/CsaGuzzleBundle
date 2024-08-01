@@ -19,7 +19,6 @@ use Psr\Http\Message\StreamInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
-use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * Csa Guzzle Collector.
@@ -185,20 +184,10 @@ abstract class AbstractGuzzleCollector extends DataCollector
     }
 }
 
-if (Kernel::MAJOR_VERSION >= 5) {
-    final class GuzzleCollector extends AbstractGuzzleCollector
+final class GuzzleCollector extends AbstractGuzzleCollector
+{
+    public function collect(Request $request, Response $response, \Throwable $exception = null): void
     {
-        public function collect(Request $request, Response $response, \Throwable $exception = null): void
-        {
-            $this->doCollect($request, $response, $exception);
-        }
-    }
-} else {
-    class GuzzleCollector extends AbstractGuzzleCollector
-    {
-        public function collect(Request $request, Response $response, \Exception $exception = null): void
-        {
-            $this->doCollect($request, $response, $exception);
-        }
+        $this->doCollect($request, $response, $exception);
     }
 }

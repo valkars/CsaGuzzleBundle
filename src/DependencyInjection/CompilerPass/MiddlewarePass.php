@@ -132,7 +132,7 @@ class MiddlewarePass implements CompilerPassInterface
      *
      * @return Definition
      */
-    private function wrapHandlerInHandlerStack($handler, ContainerBuilder $container): Definition
+    private function wrapHandlerInHandlerStack(Reference|Definition|callable $handler, ContainerBuilder $container): Definition
     {
         if ($handler instanceof Reference) {
             $handler = $container->getDefinition((string) $handler);

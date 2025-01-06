@@ -68,10 +68,12 @@ class GuzzleCollectorTest extends TestCase
         $client->get('http://foo.bar');
         $collector->collect($request, $response, new \Exception());
         $calls = $collector->getCalls();
-        $this->assertStringStartsWith(sprintf(
-            'curl %s -A',
-            escapeshellarg('http://foo.bar')
-        ), $calls[0]['curl']
+        $this->assertStringStartsWith(
+            sprintf(
+                'curl %s -A',
+                escapeshellarg('http://foo.bar')
+            ),
+            $calls[0]['curl']
         );
 
         $client->post('http://foo.bar', ['body' => str_pad('', GuzzleCollector::MAX_BODY_SIZE + 1)]);

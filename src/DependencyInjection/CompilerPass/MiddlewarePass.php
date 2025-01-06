@@ -188,12 +188,12 @@ class MiddlewarePass implements CompilerPassInterface
         }
 
         if ($whiteList) {
-            return \array_filter($middlewareBag, static function($value) use ($whiteList) {
+            return \array_filter($middlewareBag, static function ($value) use ($whiteList) {
                 return \in_array($value['alias'], $whiteList, true);
             });
         }
 
-        return \array_filter($middlewareBag, static function($value) use ($blackList) {
+        return \array_filter($middlewareBag, static function ($value) use ($blackList) {
             return !\in_array($value['alias'], $blackList, true);
         });
     }

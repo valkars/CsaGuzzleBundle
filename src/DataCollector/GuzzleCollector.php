@@ -40,7 +40,7 @@ abstract class AbstractGuzzleCollector extends DataCollector
      *
      * @param int $maxBodySize The max body size to store in the profiler storage
      */
-    public function __construct(int $maxBodySize = self::MAX_BODY_SIZE, History $history = null)
+    public function __construct(int $maxBodySize = self::MAX_BODY_SIZE, ?History $history = null)
     {
         $this->maxBodySize = $maxBodySize;
         $this->history = $history ?: new History();
@@ -55,7 +55,7 @@ abstract class AbstractGuzzleCollector extends DataCollector
     /**
      * {@inheritdoc}
      */
-    protected function doCollect(Request $request, Response $response, \Throwable $exception = null): void
+    protected function doCollect(Request $request, Response $response, ?\Throwable $exception = null): void
     {
         $data = [];
 
@@ -120,7 +120,7 @@ abstract class AbstractGuzzleCollector extends DataCollector
         $this->data = $data;
     }
 
-    private function cropContent(StreamInterface $stream = null): string
+    private function cropContent(?StreamInterface $stream = null): string
     {
         if (null === $stream) {
             return '';
@@ -186,7 +186,7 @@ abstract class AbstractGuzzleCollector extends DataCollector
 
 final class GuzzleCollector extends AbstractGuzzleCollector
 {
-    public function collect(Request $request, Response $response, \Throwable $exception = null): void
+    public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
     {
         $this->doCollect($request, $response, $exception);
     }

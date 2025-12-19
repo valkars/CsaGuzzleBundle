@@ -1,0 +1,5 @@
+services:
+    csa_guzzle.twig.extension:
+        class: Csa\Bundle\GuzzleBundle\Twig\Extension\GuzzleExtension
+        tags:
+            - { name: twig.extension }

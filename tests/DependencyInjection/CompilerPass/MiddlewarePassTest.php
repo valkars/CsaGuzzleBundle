@@ -202,7 +202,7 @@ class MiddlewarePassTest extends TestCase
         $container->setDefinition($alias, $middleware);
     }
 
-    private function createClient(array $middleware = null, $handler = null): Definition
+    private function createClient(?array $middleware = null, $handler = null): Definition
     {
         $client = new Definition();
         $client->addTag(

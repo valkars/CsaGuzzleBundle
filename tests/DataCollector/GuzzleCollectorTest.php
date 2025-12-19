@@ -35,7 +35,7 @@ class GuzzleCollectorTest extends TestCase
         $client = new Client(['handler' => $handler]);
 
         $request = Request::createFromGlobals();
-        $response = $this->createMock(\Symfony\Component\HttpFoundation\Response::class);
+        $response = $this->createStub(\Symfony\Component\HttpFoundation\Response::class);
         $collector->collect($request, $response, new \Exception());
         $this->assertCount(0, $collector->getCalls());
 
@@ -63,7 +63,7 @@ class GuzzleCollectorTest extends TestCase
         $client = new Client(['handler' => $handler]);
 
         $request = Request::createFromGlobals();
-        $response = $this->createMock(\Symfony\Component\HttpFoundation\Response::class);
+        $response = $this->createStub(\Symfony\Component\HttpFoundation\Response::class);
 
         $client->get('http://foo.bar');
         $collector->collect($request, $response, new \Exception());

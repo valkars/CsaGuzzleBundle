@@ -1,0 +1,37 @@
+services:
+    csa_guzzle.middleware.stopwatch:
+        class: Csa\GuzzleHttp\Middleware\Stopwatch\StopwatchMiddleware
+        arguments:
+            - '@debug.stopwatch'
+        tags:
+            - { name: csa_guzzle.middleware, alias: stopwatch }
+
+    csa_guzzle.middleware.history:
+        class: Csa\GuzzleHttp\Middleware\History\HistoryMiddleware
+        arguments:
+            - '@csa_guzzle.data_collector.history_bag'
+        tags:
+            - { name: csa_guzzle.middleware, alias: history, priority: -1000 }
+
+    csa_guzzle.middleware.logger:
+        class: Closure
+        factory: ['GuzzleHttp\Middleware', 'log']
+        arguments:
+            - '@logger'
+            - '@csa_guzzle.logger.message_formatter'
+            - ~ # Logger level
+        tags:
+            - { name: csa_guzzle.middleware, alias: logger }
+
+    csa_guzzle.logger.message_formatter:
+        class: GuzzleHttp\MessageFormatter
+        public: false
+        arguments:
+            - ~ # Format template
+
+    csa_guzzle.middleware.cache:
+        class: Csa\GuzzleHttp\Middleware\Cache\CacheMiddleware
+        arguments:
+            - '@csa_guzzle.cache_adapter'
+        tags:
+            - { name: csa_guzzle.middleware, alias: cache, priority: -1500 }
